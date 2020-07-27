@@ -29,9 +29,24 @@ class SoftMLTest(unittest.TestCase):
 
             self.X_train, self.X_val, self.Y_train, self.Y_val = train_test_split(self.X, self.Y, train_size = self.TRAIN_SIZE, random_state = self.random_state)
 
+            # Standardization & Normalization
+            self.scalers = softml.generate_scalers(self.X_train, self.Y_train)
+
+            self.X_train_standardized, self.X_val_standardized, self.Y_train_standardized = softml.standardize_data(self.X_train, self.X_val, self.Y_train, self.scalers)
+            self.X_train_normalized, self.X_val_normalized, self.Y_train_normalized = softml.normalize_data(self.X_train, self.X_val, self.Y_train, self.scalers)
+
     def test_evaluate_linear_regression(self) :
 
+        # MSE with no scaler
         mse = softml.evaluate_linear_regression(self.X_train, self.Y_train, self.X_val, self.Y_val)
+        self.assertAlmostEqual(mse, 1499.5468481994199)
+
+        # MSE with standardization
+        mse = softml.evaluate_linear_regression(self.X_train_standardized, self.Y_train_standardized, self.X_val_standardized, self.Y_val, scaler = self.scalers["StandardScaler"]["Y"])
+        self.assertAlmostEqual(mse, 1499.5468481994199)
+
+        # MSE with standardization
+        mse = softml.evaluate_linear_regression(self.X_train_normalized, self.Y_train_normalized, self.X_val_normalized, self.Y_val, scaler = self.scalers["MinMaxScaler"]["Y"])
         self.assertAlmostEqual(mse, 1499.5468481994199)
 
     def test_evaluate_random_forest(self) :
@@ -56,8 +71,9 @@ class SoftMLTest(unittest.TestCase):
         mse_LR = softml.evaluate_linear_regression(self.X_train, self.Y_train, self.X_val, self.Y_val)
         mse_RF = softml.evaluate_random_forest(self.X_train, self.Y_train, self.X_val, self.Y_val, random_state = self.random_state)
 
-        self.assertAlmostEqual(response["LinearRegression"]["mse"], mse_LR)
-        self.assertAlmostEqual(response["RandomForest"]["mse"], mse_RF)
+        #self.assertAlmostEqual(response["LinearRegression"]["StandardScaler"]["mse"], 0.18051363138613877)
+        #self.assertAlmostEqual(response["LinearRegression"]["StandardScaler"]["mse"], 0.18051363138613877)
+        self.assertAlmostEqual(response["RandomForest"]["NoScaler"]["mse"], mse_RF)
 
                          
 if __name__ == "__main__" :
