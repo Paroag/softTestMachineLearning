@@ -1,12 +1,12 @@
+import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
-import numpy as np
 
-from .utils import nested_dictionnary
+from softml.util.utils import nested_dictionnary
 
 def evaluate_linear_regression(X_train, Y_train, X_val, Y_val, scaler = None) :
 
